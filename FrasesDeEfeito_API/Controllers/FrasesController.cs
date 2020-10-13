@@ -31,31 +31,44 @@ namespace FrasesDeEfeito_API.Controllers
         public IActionResult GetFraseById(int id)
         {
             var returnedValue = _iFrasesServices.GetFraseById(id);
-            return Ok(returnedValue);
+            if (returnedValue == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(returnedValue);
+            }
         }
-
 
         [HttpPost]
         public IActionResult CreateFrase(Frase frase)
         {
             _iFrasesServices.CreateFrase(frase);
-            return CreatedAtAction(nameof(GetFraseById), new { ID = frase.ID }, frase);
+            return CreatedAtAction(nameof(GetFraseById), new { frase.ID }, frase);
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteFrase(int id)
         {
             var fraseToDelete = _iFrasesServices.GetFraseById(id);
-            _iFrasesServices.DeleteFrase(fraseToDelete);
+            if (fraseToDelete == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                _iFrasesServices.DeleteFrase(fraseToDelete);
+                return Ok($"ID #{id} has been removed.");
+            }
 
-            return Ok($"Frase com ID: {id} foi removida");
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateFrase(Frase frase)
         {
-            _iFrasesServices.UpdateFrase(frase);
 
+            _iFrasesServices.UpdateFrase(frase);
             return NoContent();
         }
 
